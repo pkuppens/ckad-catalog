@@ -1,0 +1,14 @@
+# Kustomize base: reuse the sample-app manifests as the single source of truth.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Reference sample-app/k8s as a directory base (it has its own kustomization.yaml).
+# Directory bases may live outside this folder; individual file refs may not.
+resources:
+  - ../../sample-app/k8s
+
+# Metadata-only labels (includeSelectors: false avoids mutating existing selectors).
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: ckad-sample
+    includeSelectors: false

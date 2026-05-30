@@ -27,10 +27,10 @@ docker build -t ckad-sample-api:dev ./sample-app/api
 docker build -t ckad-sample-frontend:dev ./sample-app/frontend
 kind load docker-image ckad-sample-api:dev ckad-sample-frontend:dev --name ckad
 
-# 2a) plain manifests
-kubectl apply -f sample-app/k8s/
+# 2a) the base (sample-app/k8s is a kustomize base)
+kubectl apply -k sample-app/k8s
 
-# 2b) or via Kustomize overlay
+# 2b) or via an environment overlay
 kubectl apply -k kustomize/overlays/dev
 
 # 3) reach it through Ingress

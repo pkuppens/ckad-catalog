@@ -1,0 +1,34 @@
+# Prod overlay: more replicas + larger API limits; :prod images.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+images:
+  - name: ckad-sample-api
+    newTag: prod
+  - name: ckad-sample-frontend
+    newTag: prod
+
+patches:
+  - target:
+      kind: Deployment
+      name: sample-api
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 4
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 500m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 384Mi
+  - target:
+      kind: Deployment
+      name: sample-frontend
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 3

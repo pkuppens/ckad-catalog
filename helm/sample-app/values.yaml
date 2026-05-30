@@ -1,0 +1,40 @@
+# Default values for the sample-app chart. Override with -f or --set.
+api:
+  image:
+    repository: ckad-sample-api
+    tag: dev
+    pullPolicy: IfNotPresent
+  replicas: 2
+  resources:
+    requests:
+      cpu: 100m
+      memory: 96Mi
+    limits:
+      cpu: 300m
+      memory: 192Mi
+
+frontend:
+  image:
+    repository: ckad-sample-frontend
+    tag: dev
+    pullPolicy: IfNotPresent
+  replicas: 2
+
+db:
+  image: postgres:16-alpine
+  storage: 1Gi
+  name: app
+  user: app
+  # Placeholder only — override at install time, e.g. --set db.password=...
+  password: changeme-placeholder
+
+ingress:
+  enabled: true
+  className: nginx
+  host: sample.local
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
