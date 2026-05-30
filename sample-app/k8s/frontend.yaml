@@ -1,0 +1,51 @@
+# Frontend tier: nginx serving static + proxying /api/ (Domains 2,5).
+#   docker build -t ckad-sample-frontend:dev sample-app/frontend
+#   kind load docker-image ckad-sample-frontend:dev --name ckad
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-frontend
+  namespace: sample
+  labels:
+    app: sample-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sample-frontend
+  template:
+    metadata:
+      labels:
+        app: sample-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ckad-sample-frontend:dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-frontend
+  namespace: sample
+spec:
+  selector:
+    app: sample-frontend
+  ports:
+    - port: 80
+      targetPort: 8080
