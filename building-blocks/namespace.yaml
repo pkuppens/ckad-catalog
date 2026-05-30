@@ -1,0 +1,6 @@
+# Namespace used by the building-block examples.
+# Generate: kubectl create namespace ckad --dry-run=client -o yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ckad

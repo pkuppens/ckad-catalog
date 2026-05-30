@@ -1,0 +1,26 @@
+# Domain 1 (Design/Build): sidecar pattern — a helper container shares a volume with the app.
+# Here the app writes logs; the sidecar tails them (classic logging sidecar).
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-with-sidecar
+  namespace: ckad
+  labels:
+    app: app-with-sidecar
+spec:
+  containers:
+    - name: app
+      image: busybox:1.36
+      command: ["/bin/sh", "-c", "i=0; while true; do echo \"$(date) line $i\" >> /var/log/app.log; i=$((i+1)); sleep 2; done"]
+      volumeMounts:
+        - name: logs
+          mountPath: /var/log
+    - name: log-sidecar
+      image: busybox:1.36
+      command: ["/bin/sh", "-c", "tail -F /var/log/app.log"]
+      volumeMounts:
+        - name: logs
+          mountPath: /var/log
+  volumes:
+    - name: logs
+      emptyDir: {}

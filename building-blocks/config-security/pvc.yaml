@@ -1,0 +1,31 @@
+# Domain 1/4 (volumes): a PersistentVolumeClaim and a Pod that mounts it.
+# On kind, the default "standard" StorageClass provisions a hostPath-backed PV dynamically.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-pvc
+  namespace: ckad
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc-consumer
+  namespace: ckad
+spec:
+  containers:
+    - name: app
+      image: busybox:1.36
+      command: ["/bin/sh", "-c", "echo persisted > /data/file; cat /data/file; sleep 3600"]
+      volumeMounts:
+        - name: data
+          mountPath: /data
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: data-pvc

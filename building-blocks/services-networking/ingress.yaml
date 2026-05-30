@@ -1,0 +1,24 @@
+# Domain 5 (Services/Networking): Ingress routes external HTTP to Services (needs an ingress controller).
+# With the kind harness (ingress-nginx + host port 80), this is reachable via the Host header.
+#   curl -H "Host: web.local" http://localhost/
+# Generate: kubectl create ingress web --rule="web.local/*=web-clusterip:80" --dry-run=client -o yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web
+  namespace: ckad
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: web.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-clusterip
+                port:
+                  number: 80

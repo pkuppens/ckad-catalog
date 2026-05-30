@@ -1,0 +1,16 @@
+# Domain 3 (Observability): a deliberately failing Pod for debugging practice.
+# Investigate with:
+#   kubectl describe pod crashloop -n ckad
+#   kubectl logs crashloop -n ckad --previous
+#   kubectl get events -n ckad --sort-by=.lastTimestamp
+apiVersion: v1
+kind: Pod
+metadata:
+  name: crashloop
+  namespace: ckad
+spec:
+  restartPolicy: Always
+  containers:
+    - name: faulty
+      image: busybox:1.36
+      command: ["/bin/sh", "-c", "echo starting; sleep 3; echo 'boom' >&2; exit 1"]

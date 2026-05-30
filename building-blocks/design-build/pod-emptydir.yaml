@@ -1,0 +1,19 @@
+# Domain 1 (Design/Build): emptyDir volume — ephemeral scratch shared between containers in a Pod.
+# Lives as long as the Pod; deleted when the Pod is removed.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: emptydir-demo
+  namespace: ckad
+spec:
+  containers:
+    - name: writer
+      image: busybox:1.36
+      command: ["/bin/sh", "-c", "echo data > /cache/file; sleep 3600"]
+      volumeMounts:
+        - name: cache
+          mountPath: /cache
+  volumes:
+    - name: cache
+      emptyDir:
+        sizeLimit: 64Mi

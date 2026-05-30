@@ -1,0 +1,32 @@
+# Domain 4 (Config/Security): ResourceQuota caps total usage in a namespace;
+# LimitRange supplies default requests/limits and per-container bounds.
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: ckad-quota
+  namespace: ckad
+spec:
+  hard:
+    requests.cpu: "2"
+    requests.memory: 2Gi
+    limits.cpu: "4"
+    limits.memory: 4Gi
+    pods: "20"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: ckad-limits
+  namespace: ckad
+spec:
+  limits:
+    - type: Container
+      default:
+        cpu: 250m
+        memory: 128Mi
+      defaultRequest:
+        cpu: 100m
+        memory: 64Mi
+      max:
+        cpu: "1"
+        memory: 512Mi
