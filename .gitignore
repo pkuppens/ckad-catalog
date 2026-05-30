@@ -1,0 +1,30 @@
+# Scratch / course notes (never commit copyrighted course material)
+tmp/
+
+# Local kube + cluster artifacts
+*.kubeconfig
+kubeconfig*
+*.local.yaml
+*.local.yml
+
+# Secrets (use sealed/external secrets; never commit real values)
+*secret*.local.*
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Python (sample-app)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node (sample-app frontend, if any)
+node_modules/
+dist/
