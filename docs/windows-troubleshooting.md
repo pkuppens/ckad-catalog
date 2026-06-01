@@ -37,6 +37,78 @@ Official fallbacks if winget packages are unavailable:
 | Helm | [helm.sh/docs/intro/install](https://helm.sh/docs/intro/install/) |
 | kind | [kind.sigs.k8s.io/docs/user/quick-start#installation](https://kind.sigs.k8s.io/docs/user/quick-start#installation) |
 
+## Meta-validation: confirm Kubernetes responds (Windows)
+
+Run this **before** the repo end-to-end workflow. Every command must succeed without `connection refused`, `Unable to connect`, or `The connection to the server ... was refused`.
+
+### Step 1 — Docker and CLI tools (client only)
+
+```powershell
+docker version          # Client AND Server sections present
+kind version
+kubectl version --client
+helm version
+```
+
+### Step 2 — Create any kind cluster (minimal smoke test)
+
+If you have never run kind on this machine, prove the toolchain works:
+
+```powershell
+winget install Kubernetes.kind   # skip if already installed
+kind version
+kind create cluster              # default name "kind", context "kind-kind"
+```
+
+**Docker Desktop option:** Settings → Kubernetes → **Enable Kubernetes** → provider **kind** (version shown in UI, e.g. 1.35.x). This gives Docker Desktop a managed cluster; you can still create the repo's `ckad` cluster separately. Use **one kubectl context at a time** — check with `kubectl config current-context`.
+
+### Step 3 — Client **and** server respond
+
+```powershell
+kubectl cluster-info
+kubectl get nodes
+kubectl get pods -A
+kubectl version                  # shows Client Version AND Server Version
+```
+
+**Pass when:**
+
+| Check | Expected |
+| --- | --- |
+| `kubectl get nodes` | At least one node, status `Ready` |
+| `kubectl cluster-info` | Kubernetes control plane URL prints (no error) |
+| `kubectl version` | **Server Version** line is present (not client-only) |
+| `kubectl get pods -A` | Lists system pods (may take a minute after create) |
+
+Example of a healthy `kubectl get nodes`:
+
+```text
+NAME                 STATUS   ROLES           AGE   VERSION
+kind-control-plane   Ready    control-plane   2m    v1.x.x
+```
+
+### Step 4 — Switch to the repo cluster
+
+The catalog uses a dedicated cluster named **`ckad`** (not the default `kind` cluster). From the repo root:
+
+```powershell
+./cluster/setup.ps1
+kubectl config current-context    # should be kind-ckad
+kubectl get nodes                 # 3 nodes Ready (1 control-plane + 2 workers)
+```
+
+If you still have the default smoke-test cluster and do not need it:
+
+```powershell
+kind delete cluster --name kind   # only the default smoke-test cluster
+```
+
+### Quick diagnostic one-liner
+
+```powershell
+kubectl get nodes 2>&1; if ($LASTEXITCODE -ne 0) { Write-Host 'FAIL: kubectl cannot reach a cluster' -ForegroundColor Red } else { Write-Host 'OK: cluster responds' -ForegroundColor Green }
+```
+
 ## Running the cluster scripts
 
 From the repo root in PowerShell:
