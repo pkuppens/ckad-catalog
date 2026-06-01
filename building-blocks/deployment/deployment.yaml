@@ -1,0 +1,40 @@
+# Domain 2 (Deployment): a Deployment manages a ReplicaSet for rolling updates and rollback.
+# Update image:   kubectl set image deployment/web web=nginx:1.27
+# Watch rollout:  kubectl rollout status deployment/web
+# Roll back:      kubectl rollout undo deployment/web
+# Generate: kubectl create deployment web --image=nginx:1.26 --replicas=3 --dry-run=client -o yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: ckad
+  labels:
+    app: web
+spec:
+  replicas: 3
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: nginx:1.26
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

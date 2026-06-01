@@ -1,0 +1,19 @@
+# Domain 1 (Design/Build): a Job runs a pod to completion (restartPolicy must not be Always).
+# completions/parallelism control how many pods run; backoffLimit caps retries.
+# Generate: kubectl create job pi --image=perl:5.34 --dry-run=client -o yaml -- perl -Mbignum=bpi -wle "print bpi(200)"
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pi
+  namespace: ckad
+spec:
+  completions: 1
+  parallelism: 1
+  backoffLimit: 4
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: pi
+          image: perl:5.34
+          command: ["perl", "-Mbignum=bpi", "-wle", "print bpi(200)"]

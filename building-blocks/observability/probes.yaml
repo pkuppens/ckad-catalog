@@ -1,0 +1,36 @@
+# Domain 3 (Observability): all three probe types on one container.
+#  - startupProbe:   protects slow-starting containers; disables the others until it succeeds.
+#  - readinessProbe: gates traffic (removes pod from Service endpoints when failing).
+#  - livenessProbe:  restarts the container when failing.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: probes-demo
+  namespace: ckad
+  labels:
+    app: probes-demo
+spec:
+  containers:
+    - name: web
+      image: nginx:1.27
+      ports:
+        - containerPort: 80
+      startupProbe:
+        httpGet:
+          path: /
+          port: 80
+        failureThreshold: 30
+        periodSeconds: 5
+      readinessProbe:
+        httpGet:
+          path: /
+          port: 80
+        initialDelaySeconds: 2
+        periodSeconds: 5
+      livenessProbe:
+        httpGet:
+          path: /
+          port: 80
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        failureThreshold: 3

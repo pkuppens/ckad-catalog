@@ -1,0 +1,15 @@
+# Domain 5 (Services/Networking): ClusterIP — internal-only virtual IP, the default Service type.
+# Generate: kubectl expose deployment web --name=web-clusterip --port=80 --target-port=80 --dry-run=client -o yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-clusterip
+  namespace: ckad
+spec:
+  type: ClusterIP
+  selector:
+    app: web
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP

@@ -1,0 +1,20 @@
+# Expose the frontend via Ingress (Domain 5). Reach it with:
+#   curl -H "Host: sample.local" http://localhost/
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sample
+  namespace: sample
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: sample.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sample-frontend
+                port:
+                  number: 80

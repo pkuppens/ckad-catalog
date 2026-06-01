@@ -1,0 +1,33 @@
+# Domain 5 (Services/Networking): default-deny ingress + an explicit allow rule.
+# 1) deny all inbound traffic to pods in the namespace, then
+# 2) allow only pods labelled role=frontend to reach pods labelled app=web on port 80.
+# Note: enforcement requires a CNI that supports NetworkPolicy.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: ckad
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-web
+  namespace: ckad
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              role: frontend
+      ports:
+        - protocol: TCP
+          port: 80

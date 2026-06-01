@@ -1,0 +1,15 @@
+# Domain 1 (Design/Build): the most basic workload — a single-container Pod.
+# Generate: kubectl run web --image=nginx:1.27 --port=80 --dry-run=client -o yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web
+  namespace: ckad
+  labels:
+    app: web
+spec:
+  containers:
+    - name: web
+      image: nginx:1.27
+      ports:
+        - containerPort: 80

@@ -1,0 +1,16 @@
+# Domain 5 (Services/Networking): LoadBalancer — requests an external LB from the cloud provider.
+# On kind there is no cloud LB; install cloud-provider-kind or MetalLB to get an external IP,
+# otherwise it stays <pending> (still valid for CKAD: you write the manifest correctly).
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-lb
+  namespace: ckad
+spec:
+  type: LoadBalancer
+  selector:
+    app: web
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP

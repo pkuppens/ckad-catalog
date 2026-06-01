@@ -1,0 +1,34 @@
+# Domain 4 (Config/Security): ConfigMap consumed two ways — as env vars and as a mounted file.
+# Generate: kubectl create configmap app-config --from-literal=LOG_LEVEL=info --from-literal=GREETING=hello --dry-run=client -o yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: ckad
+data:
+  LOG_LEVEL: "info"
+  GREETING: "hello"
+  app.properties: |
+    color=blue
+    retries=3
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-consumer
+  namespace: ckad
+spec:
+  containers:
+    - name: app
+      image: busybox:1.36
+      command: ["/bin/sh", "-c", "env | grep -E 'LOG_LEVEL|GREETING'; cat /etc/app/app.properties; sleep 3600"]
+      envFrom:
+        - configMapRef:
+            name: app-config
+      volumeMounts:
+        - name: cfg
+          mountPath: /etc/app
+  volumes:
+    - name: cfg
+      configMap:
+        name: app-config

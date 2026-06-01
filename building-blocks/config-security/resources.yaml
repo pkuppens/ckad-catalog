@@ -1,0 +1,18 @@
+# Domain 4 (Config/Security): resource requests and limits.
+# requests = scheduling guarantee; limits = hard cap (CPU throttled, memory OOM-killed).
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resources-demo
+  namespace: ckad
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27
+      resources:
+        requests:
+          cpu: 100m
+          memory: 64Mi
+        limits:
+          cpu: 250m
+          memory: 128Mi

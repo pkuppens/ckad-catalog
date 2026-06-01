@@ -1,0 +1,14 @@
+# Makes sample-app/k8s a self-contained kustomize base.
+# Apply directly with:  kubectl apply -k sample-app/k8s
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - secret.yaml
+  - postgres.yaml
+  - api.yaml
+  - frontend.yaml
+  - ingress.yaml
+  - hpa.yaml
+  - networkpolicy.yaml

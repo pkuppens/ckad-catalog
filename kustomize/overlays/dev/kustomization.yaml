@@ -1,0 +1,28 @@
+# Dev overlay: single replicas to keep the local cluster light; :dev images.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+images:
+  - name: ckad-sample-api
+    newTag: dev
+  - name: ckad-sample-frontend
+    newTag: dev
+
+patches:
+  - target:
+      kind: Deployment
+      name: sample-api
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 1
+  - target:
+      kind: Deployment
+      name: sample-frontend
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 1

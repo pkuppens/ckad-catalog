@@ -1,0 +1,11 @@
+# Non-secret DB connection settings (Domain 4: ConfigMap).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sample-config
+  namespace: sample
+data:
+  DB_HOST: "sample-db"
+  DB_PORT: "5432"
+  DB_NAME: "app"
+  DB_USER: "app"
