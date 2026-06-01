@@ -9,5 +9,5 @@ helm upgrade sample ./helm/sample-app -n sample --set api.replicas=4
 helm uninstall sample -n sample
 ```
 
-Values live in `sample-app/values.yaml`. Override at install/upgrade time, e.g.
+Values live in `helm/sample-app/values.yaml`. Override at install/upgrade time, e.g.
 `--set db.password=...` (never commit real secrets).
