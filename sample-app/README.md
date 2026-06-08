@@ -19,14 +19,28 @@ docker compose up --build
 # frontend: http://localhost:8080   api: http://localhost:8000/
 ```
 
-## On the kind cluster
+## On the local cluster
+
+**Windows (minikube profile `ckad`):**
 
 ```powershell
-# 1) build images and load them into kind (no registry needed)
+docker build -t ckad-sample-api:dev ./sample-app/api
+docker build -t ckad-sample-frontend:dev ./sample-app/frontend
+minikube image load ckad-sample-api:dev -p ckad
+minikube image load ckad-sample-frontend:dev -p ckad
+```
+
+**macOS / Linux (kind cluster `ckad`):**
+
+```bash
 docker build -t ckad-sample-api:dev ./sample-app/api
 docker build -t ckad-sample-frontend:dev ./sample-app/frontend
 kind load docker-image ckad-sample-api:dev ckad-sample-frontend:dev --name ckad
+```
 
+Then deploy and reach the app:
+
+```powershell
 # 2a) the base (sample-app/k8s is a kustomize base)
 kubectl apply -k sample-app/k8s
 

@@ -1,11 +1,11 @@
-# cluster — local kind harness
+# cluster — local cluster harness
 
-Local Kubernetes for CKAD practice using **kind** (Kubernetes IN Docker). Works on **Windows**, **macOS**, and **Linux** with Docker installed.
+Local Kubernetes for CKAD practice. **Windows** uses **minikube** (Docker driver); **macOS / Linux** use **kind** (Kubernetes IN Docker).
 
-| OS | Setup script | Teardown script |
-| --- | --- | --- |
-| Windows (PowerShell) | `./cluster/setup.ps1` | `./cluster/teardown.ps1` |
-| macOS / Linux / Git Bash / WSL | `./cluster/setup.sh` | `./cluster/teardown.sh` |
+| OS | Backend | Setup script | Teardown script | kubectl context |
+| --- | --- | --- | --- | --- |
+| Windows (PowerShell) | minikube | `./cluster/setup.ps1` | `./cluster/teardown.ps1` | `ckad` |
+| macOS / Linux / Git Bash / WSL | kind | `./cluster/setup.sh` | `./cluster/teardown.sh` | `kind-ckad` |
 
 Make shell scripts executable once: `chmod +x cluster/setup.sh cluster/teardown.sh`
 
@@ -13,22 +13,18 @@ Windows-specific problems: [`docs/windows-troubleshooting.md`](../docs/windows-t
 
 ## Prerequisites
 
-You need a container runtime (Docker Desktop or Docker Engine), **kind**, **kubectl**, and **Helm** (for chart exercises). Kustomize is built into kubectl (`kubectl apply -k`).
+You need a container runtime (Docker Desktop or Docker Engine), **kubectl**, and **Helm** (for chart exercises). Kustomize is built into kubectl (`kubectl apply -k`).
+
+- **Windows:** minikube — see [`docs/windows-prerequisites.md`](../docs/windows-prerequisites.md)
+- **macOS / Linux:** kind — install steps below
 
 ### Windows
 
-Install with [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/) in PowerShell:
+Use the dedicated prerequisites page (winget install + **version checks**):
 
-```powershell
-winget install Docker.DockerDesktop
-winget install Kubernetes.kind
-winget install Kubernetes.kubectl
-winget install Helm.Helm
-```
+- [`docs/windows-prerequisites.md`](../docs/windows-prerequisites.md)
 
-Restart the terminal, start Docker Desktop, then verify: `docker version`, `kind version`, `kubectl version --client`, `helm version`.
-
-Download fallbacks: [Docker Desktop](https://www.docker.com/products/docker-desktop/) · [kubectl (Windows)](https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/) · [Helm](https://helm.sh/docs/intro/install/) · [kind](https://kind.sigs.k8s.io/docs/user/quick-start#installation)
+Download fallbacks: [Docker Desktop](https://www.docker.com/products/docker-desktop/) · [kubectl (Windows)](https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/) · [Helm](https://helm.sh/docs/intro/install/) · [minikube](https://minikube.sigs.k8s.io/docs/start/)
 
 ### macOS
 
@@ -65,21 +61,22 @@ Adjust architecture (`arm64` vs `amd64`) if needed.
 **PowerShell (Windows):**
 
 ```powershell
-./cluster/setup.ps1       # create cluster "ckad" + ingress-nginx, wait until ready
-./cluster/teardown.ps1    # delete the cluster
+./cluster/setup.ps1       # minikube profile "ckad" + ingress addon, wait until ready
+./cluster/teardown.ps1    # delete the profile
 ```
 
 **Bash (macOS / Linux / WSL / Git Bash):**
 
 ```bash
-./cluster/setup.sh
+./cluster/setup.sh        # kind cluster "ckad" + ingress-nginx
 ./cluster/teardown.sh
 ```
 
-Setup is idempotent: an existing `ckad` cluster is reused. The control-plane maps host ports 80/443, so Ingress resources are reachable at `http://localhost`.
+Setup is idempotent: an existing `ckad` cluster/profile is reused. Host ports 80/443 are mapped so Ingress resources are reachable at `http://localhost`.
 
 ## Notes
 
-- Cluster name: `ckad`; context: `kind-ckad`.
-- Topology: 1 control-plane + 2 workers (practice nodeSelector, taints, scheduling).
-- Alternatives: minikube (`minikube start`) or k3d (`k3d cluster create`). Building blocks are portable; only these harness scripts are kind-specific.
+- Profile/cluster name: **`ckad`**
+- **Windows:** minikube context `ckad`, single-node cluster
+- **macOS / Linux:** kind context `kind-ckad`, 1 control-plane + 2 workers (practice nodeSelector, taints, scheduling)
+- Building blocks and manifests are portable; only these harness scripts are platform-specific
