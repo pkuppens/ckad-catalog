@@ -2,9 +2,9 @@
 
 A catalog of **generic, reusable Kubernetes building blocks**, a local cluster harness, and study material for the **CKAD (Certified Kubernetes Application Developer)** exam. Artifacts are built abstract-first here, proven on a local cluster, then ported into portfolio projects (`on_prem_rag`, `babblr`).
 
-> Build abstract/generic here first → prove it on a local `kind` cluster → port the result into the projects.
+> Build abstract/generic here first → prove it on a local cluster → port the result into the projects.
 
-**Platforms:** Windows, macOS, and Linux with [Docker](https://docs.docker.com/get-docker/) and [kind](https://kind.sigs.k8s.io/). Harness scripts are provided for PowerShell and Bash; Kubernetes manifests work on any cluster.
+**Platforms:** Windows ([minikube](https://minikube.sigs.k8s.io/)), macOS and Linux ([kind](https://kind.sigs.k8s.io/)), all with [Docker](https://docs.docker.com/get-docker/). Harness scripts are provided for PowerShell and Bash; Kubernetes manifests work on any cluster.
 
 ### Why this repo
 
@@ -16,7 +16,7 @@ A catalog of **generic, reusable Kubernetes building blocks**, a local cluster h
 
 | Path | Purpose |
 | --- | --- |
-| [`cluster/`](cluster/README.md) | Local `kind` cluster harness + ingress install |
+| [`cluster/`](cluster/README.md) | Local cluster harness (minikube on Windows, kind elsewhere) + ingress |
 | [`building-blocks/`](building-blocks/README.md) | One primitive per file, grouped by CKAD domain |
 | [`sample-app/`](sample-app/README.md) | Minimal three-tier app to exercise every primitive |
 | [`kustomize/`](kustomize/README.md) | Base + dev/prod overlays for the sample app |
@@ -28,24 +28,18 @@ A catalog of **generic, reusable Kubernetes building blocks**, a local cluster h
 
 ### Prerequisites
 
-Install Docker, [kind](https://kind.sigs.k8s.io/), [kubectl](https://kubernetes.io/docs/tasks/tools/), and [Helm](https://helm.sh/). Kustomize is built into kubectl (`apply -k`).
+Install Docker, [kubectl](https://kubernetes.io/docs/tasks/tools/), and [Helm](https://helm.sh/). Windows also needs [minikube](https://minikube.sigs.k8s.io/); macOS/Linux need [kind](https://kind.sigs.k8s.io/). Kustomize is built into kubectl (`apply -k`).
 
 <details>
 <summary><strong>Windows</strong> (PowerShell + winget)</summary>
 
-```powershell
-winget install Docker.DockerDesktop
-winget install Kubernetes.kind
-winget install Kubernetes.kubectl
-winget install Helm.Helm
-```
+Use the dedicated prerequisites page (winget install + **version checks**):
 
-1. Start **Docker Desktop** and wait until the engine is running.
-2. **Restart your terminal**, then verify: `docker version`, `kind version`, `kubectl version --client`, `helm version`.
+- [`docs/windows-prerequisites.md`](docs/windows-prerequisites.md)
 
-Downloads if winget is unavailable: [Docker Desktop](https://www.docker.com/products/docker-desktop/) · [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/) · [Helm](https://helm.sh/docs/intro/install/) · [kind](https://kind.sigs.k8s.io/docs/user/quick-start#installation)
+If something fails after install:
 
-**Windows troubleshooting:** [`docs/windows-troubleshooting.md`](docs/windows-troubleshooting.md) (WSL 2, PATH, ImagePullBackOff, ingress, script execution).
+- [`docs/windows-troubleshooting.md`](docs/windows-troubleshooting.md)
 
 </details>
 
@@ -70,19 +64,21 @@ Install [Docker Engine](https://docs.docker.com/engine/install/) for your distro
 
 Full per-OS notes: [`cluster/README.md`](cluster/README.md).
 
-### Run the sample app on kind
+### Run the sample app on the local cluster
 
 From the repo root.
 
-**Windows (PowerShell):**
+**Windows (PowerShell, minikube profile `ckad`):**
 
 ```powershell
 ./cluster/setup.ps1
+kubectl config current-context   # expect: ckad
 kubectl get nodes
 
 docker build -t ckad-sample-api:dev ./sample-app/api
 docker build -t ckad-sample-frontend:dev ./sample-app/frontend
-kind load docker-image ckad-sample-api:dev ckad-sample-frontend:dev --name ckad
+minikube image load ckad-sample-api:dev -p ckad
+minikube image load ckad-sample-frontend:dev -p ckad
 
 kubectl apply -k kustomize/overlays/dev
 curl -H "Host: sample.local" http://localhost/

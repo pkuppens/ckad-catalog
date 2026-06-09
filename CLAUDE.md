@@ -2,13 +2,13 @@
 
 ## Project overview
 
-Generic, reusable Kubernetes building blocks + a local `kind` cluster harness + CKAD study coverage. Artifacts are developed abstract-first here, then ported into portfolio projects (`on_prem_rag`, `babblr`).
+Generic, reusable Kubernetes building blocks + a local cluster harness + CKAD study coverage. Artifacts are developed abstract-first here, then ported into portfolio projects (`on_prem_rag`, `babblr`).
 
 ## Commands
 
 ```powershell
-./cluster/setup.ps1                       # create kind cluster + ingress
-./cluster/teardown.ps1                    # delete cluster
+./cluster/setup.ps1                       # Windows: minikube profile ckad + ingress
+./cluster/teardown.ps1                    # delete cluster/profile
 kubectl apply -k kustomize/overlays/dev   # deploy sample app (dev overlay)
 helm template ./helm/sample-app           # render Helm chart
 kubectl apply -f building-blocks/<domain>/<file>.yaml
@@ -29,5 +29,5 @@ kubectl apply -f building-blocks/<domain>/<file>.yaml
 
 ## Tooling
 
-- Local cluster: `kind` (Docker-based). Alternatives: minikube, k3d.
+- Local cluster: **minikube** (Windows PowerShell), **kind** (macOS/Linux via `setup.sh`). Same profile name `ckad`.
 - `kubectl` (v1.3x), `helm`, and `kubectl`'s built-in Kustomize (`apply -k`).

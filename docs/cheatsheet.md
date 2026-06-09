@@ -21,7 +21,8 @@ $do = "--dry-run=client -o yaml"
 
 ```bash
 kubectl config get-contexts
-kubectl config use-context kind-ckad
+kubectl config use-context kind-ckad   # macOS/Linux (kind)
+# kubectl config use-context ckad    # Windows (minikube)
 kubectl config set-context --current --namespace=ckad
 kubectl get ns
 ```
