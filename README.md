@@ -1,6 +1,8 @@
 # ckad-catalog
 
-A catalog of **generic, reusable Kubernetes building blocks**, a local cluster harness, and study material for the **CKAD (Certified Kubernetes Application Developer)** exam. Artifacts are built abstract-first here, proven on a local cluster, then ported into portfolio projects (`on_prem_rag`, `babblr`).
+A catalog of **generic, reusable Kubernetes building blocks**, a local cluster harness, and study material **aligned with the CKAD (Certified Kubernetes Application Developer) curriculum**. Artifacts are built abstract-first here, proven on a local cluster, then ported into portfolio projects (`on_prem_rag`, `babblr`).
+
+> **Status: completed learning track.** I followed CKAD training and built this hands-on material, but I am not sitting the exam. My focus is AI / scientific development rather than scalable cloud-platform engineering. The catalog stays as a working reference for deploying AI workloads (e.g. scaling STT/embeddings, GPU overlays) on Kubernetes.
 
 > Build abstract/generic here first → prove it on a local cluster → port the result into the projects.
 
@@ -10,7 +12,7 @@ A catalog of **generic, reusable Kubernetes building blocks**, a local cluster h
 
 - CKAD tests how you **deploy and operate apps on Kubernetes** (Deployments, Services, Ingress, ConfigMaps/Secrets, probes, PVCs, HPA, NetworkPolicies, Jobs).
 - Generic, annotated building blocks stay reusable across projects and easy to showcase.
-- A coverage matrix gives **traceability** so no exam domain is missed.
+- A coverage matrix gives **traceability** so no curriculum domain is missed.
 
 ### Layout
 
@@ -145,11 +147,11 @@ Study traceability: [`docs/coverage-matrix.md`](docs/coverage-matrix.md).
 
 ## Contributing
 
-This is a personal study repo. Effort is tracked under EPIC [pkuppens/pkuppens#109](https://github.com/pkuppens/pkuppens/issues/109). Repo issues: [github.com/pkuppens/ckad-catalog/issues](https://github.com/pkuppens/ckad-catalog/issues).
+This is a personal learning repo, now closed out. Effort was tracked under EPIC [pkuppens/pkuppens#109](https://github.com/pkuppens/pkuppens/issues/109). Repo issues: [github.com/pkuppens/ckad-catalog/issues](https://github.com/pkuppens/ckad-catalog/issues).
 
 When adding or changing manifests:
 
-- One primitive per building-block file; keep manifests minimal and CKAD-exam-shaped.
+- One primitive per building-block file; keep manifests minimal and CKAD-curriculum-shaped.
 - Start each manifest with a comment block: intent + the `kubectl ... --dry-run=client -o yaml` command that generates it.
 - Never commit real secrets (placeholders only) or copyrighted external course material (keep course notes in `tmp/`, gitignored).
 - When a lab covers a CKAD subtopic, tick it in [`docs/coverage-matrix.md`](docs/coverage-matrix.md).
